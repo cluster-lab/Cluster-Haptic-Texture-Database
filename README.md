@@ -1,1 +1,1 @@
-# Cluster-Haptic-Texture-Database
+# Cluster Haptic Texture Database
