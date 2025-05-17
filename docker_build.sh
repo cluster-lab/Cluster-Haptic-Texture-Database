@@ -1,0 +1,1 @@
+docker build -t hapticdataset_eval:latest .

@@ -1,0 +1,13 @@
+torchvision
+transformers
+librosa
+torchmetrics
+scikit-learn
+pandas
+matplotlib
+seaborn
+tensorboard
+tensorboardX
+noisereduce
+timm
+opencv-python
