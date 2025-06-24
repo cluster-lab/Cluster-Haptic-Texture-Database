@@ -14,13 +14,13 @@ texture_dataset/
     └── crop_images/ (for evaluation of texture classification)
 │
 └── sensor_data/
+    ├── audio/ (after noise canceling)
+    │
+    ├── raw_audio/
+    │
     ├── accel/
     │
-    ├── force/
-    │
-    ├── sound/ (after noise canceling)
-    │
-    └── raw_sound/
+    └── force/
 ```
 
 ## images_scan_area file naming rule
@@ -55,6 +55,20 @@ numbers of scan
 - force 500 mN
 - repeat count: 0
 
+## audio
+Sound source after noise cancelling.
+- file format : wav
+- sampling rate 44.1 kHz
+
+## raw_audio
+Raw sound source
+- file format : wav
+- two channel (stereo signal)
+    - channnel 0: main mic signal (texture + machine noise signal)
+    - channnel 1: sub mic signal (machine noise signal)
+- sampling rate 44.1 kHz
+
+
 ## accel
 - file format : csv
 - time (s)
@@ -81,15 +95,3 @@ time,force
 0.0013390528727670048,1.009
 ```
 
-## sound
-Sound source after noise cancelling.
-- file format : wav
-- sampling rate 44.1 kHz
-
-## raw_sound
-Raw sound source
-- file format : wav
-- two channel (stereo signal)
-    - channnel 0: main mic signal (texture + machine noise signal)
-    - channnel 1: sub mic signal (machine noise signal)
-- sampling rate 44.1 kHz

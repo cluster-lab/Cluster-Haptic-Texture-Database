@@ -7,8 +7,8 @@ from basic_filter.LowPassFilter import LowPassFilter
 from basic_filter.BandPassFilter import BandPassFilter
 import re
 
-def read_wav_files_from_folder(sound_dir, scale=None):
-    folder_list = [os.path.join(sound_dir, f) for f in os.listdir(sound_dir) if os.path.isdir(os.path.join(sound_dir, f))]
+def read_wav_files_from_folder(audio_dir, scale=None):
+    folder_list = [os.path.join(audio_dir, f) for f in os.listdir(audio_dir) if os.path.isdir(os.path.join(audio_dir, f))]
     folder_list = sorted(folder_list, key=lambda x: int(re.search(r'\d+', os.path.basename(x)).group()))  # sort by texture id
 
     # scale
@@ -44,10 +44,10 @@ def process_wav_files(input_dir, output_dir, filter_class, filter_args, scale=No
 
 # example
 if __name__ == '__main__':
-    input_directory = 'C:/workspace/hapticsdataset_eval/texture_dataset/sensor_data/sound'
-    output_directory = 'C:/workspace/hapticsdataset_eval/texture_dataset/sensor_data/filter_sound'
-    # input_directory = '/workspace/texture_dataset/sensor_data/sound'
-    # output_directory = '/workspace/texture_dataset/sensor_data/filter_sound'
+    input_directory = 'C:/workspace/hapticsdataset_eval/texture_dataset/sensor_data/raw_audio'
+    output_directory = 'C:/workspace/hapticsdataset_eval/texture_dataset/sensor_data/audio'
+    # input_directory = '/workspace/texture_dataset/sensor_data/raw_audio'
+    # output_directory = '/workspace/texture_dataset/sensor_data/audio'
     cutoff_frequency = 1000  # cutoff frequency of high-pass filter
     sampling_rate = 44100  # sampling rate
     order = 12

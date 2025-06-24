@@ -1,1 +1,1 @@
-docker build -t hapticdataset_eval:latest .
+docker build -t cluster_haptic_texture_database:latest .

@@ -10,9 +10,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from datasets.dataset_scale import DatasetScale
 
 
-class SoundVelDirDataset(Dataset):
+class AudioVelDirDataset(Dataset):
     def __init__(self, index, root_dir, label="vel", transform=None, duration=4, sr=22050):
-        self.sound_dir = os.path.join(root_dir, "sensor_data/sound")
+        self.audio_dir = os.path.join(root_dir, "sensor_data/audio")
 
         self.transform = transform
 
@@ -20,7 +20,7 @@ class SoundVelDirDataset(Dataset):
         self.sr = sr
         self.total_samples = sr * duration
         
-        folder_list = [os.path.join(self.sound_dir, f) for f in os.listdir(self.sound_dir) if os.path.isdir(os.path.join(self.sound_dir, f))]
+        folder_list = [os.path.join(self.audio_dir, f) for f in os.listdir(self.audio_dir) if os.path.isdir(os.path.join(self.audio_dir, f))]
         folder_list = sorted(folder_list, key=lambda x: int(os.path.basename(x)))  # sort by texture id
         file_list = []
         for folder in folder_list:
@@ -51,8 +51,8 @@ class SoundVelDirDataset(Dataset):
         for file_name in self.file_list:
             texture_id, line_degree, velocity, _, _ = self.parse_filename(file_name)
 
-            sound_path = os.path.join(self.sound_dir, texture_id, file_name)
-            sound_data = self.load_wav(sound_path)
+            audio_path = os.path.join(self.audio_dir, texture_id, file_name)
+            audio_data = self.load_wav(audio_path)
 
             if label == "vel":
                 mapped_id = self.label_to_int[velocity]
@@ -60,7 +60,7 @@ class SoundVelDirDataset(Dataset):
                 mapped_id = self.label_to_int[line_degree]
             
             # add data and label to lists
-            self.data_list.append(sound_data)
+            self.data_list.append(audio_data)
             self.labels_list.append(mapped_id)
         
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         transforms.Resize((128, 256))
     ])
 
-    dataset = SoundVelDirDataset(25, '/workspace/texture_dataset', label="vel", transform=transform, duration=4, sr=22050)
+    dataset = AudioVelDirDataset(25, '/workspace/texture_dataset', label="vel", transform=transform, duration=4, sr=22050)
     
     num_samples = len(dataset)
     print("Number of samples in dataset:", num_samples)

@@ -11,14 +11,14 @@ import seaborn as sns
 from tensorboardX import SummaryWriter
 import numpy as np
 from torchmetrics.classification import MulticlassConfusionMatrix
-from datasets.sound_dataset import SoundDataset
+from datasets.audio_dataset import AudioDataset
 from datasets.accel_dataset_mel import AccelDatasetMel
 from datasets.force_dataset_mel import ForceDatasetMel
-from datasets.sound_accel_dataset import SoundAccelDataset
+from datasets.audio_accel_dataset import AudioAccelDataset
 from datasets.dataset_scale import DatasetScale
 from classification.ResnetClassification import ResnetClassification
 from classification.VitClassification import VitClassification
-from classification.SoundAccelMultiClassification import SoundAccelMultiClassification
+from classification.AudioAccelMultiClassification import AudioAccelMultiClassification
 from classification.SVClassification import SVClassification
 from classification.DecisionTreeClassification import DecisionTreeClassification
 from classification.RandomForestClassification import RandomForestClassification
@@ -96,13 +96,13 @@ def load_dataset(dataset_type, dataset_scale, data_dir, transform):
     else:
         raise ValueError(f"Unknown dataset scale: {dataset_scale}")
 
-    if dataset_type == 'sound':
-        return SoundDataset(data_dir, transform=transform, duration=1, sr=22050, scale=scale)
+    if dataset_type == 'audio':
+        return AudioDataset(data_dir, transform=transform, duration=1, sr=22050, scale=scale)
     elif dataset_type == 'accel':
         # return AccelDatasetRawimage(data_dir, transform=transform, sampling_interval=0.001, duration=0.3, scale=scale)
         return AccelDatasetMel(data_dir, transform=transform, sampling_interval=0.0002, duration=1, scale=scale)
-    elif dataset_type == 'sound_accel':
-        return SoundAccelDataset(data_dir, transform=transform, duration=1, sr=22050, sampling_interval=0.0002, scale=scale)
+    elif dataset_type == 'audio_accel':
+        return AudioAccelDataset(data_dir, transform=transform, duration=1, sr=22050, sampling_interval=0.0002, scale=scale)
     elif dataset_type == 'force':
         return ForceDatasetMel(data_dir, transform=transform, sampling_interval=0.0002, duration=1, scale=scale)
     else:
@@ -138,7 +138,7 @@ def main(args):
     train_dataset, val_dataset, test_dataset = random_split(full_dataset, [train_size, val_size, test_size])
 
     # redefine dataset
-    if args.dataset == 'sound_accel':
+    if args.dataset == 'audio_accel':
         train_dataset = CustomDataset(train_dataset, transform=data_transforms['train'], multi_input=True)
         val_dataset = CustomDataset(val_dataset, transform=data_transforms['val'], multi_input=True)
         test_dataset = CustomDataset(test_dataset, transform=data_transforms['test'], multi_input=True)
@@ -158,14 +158,14 @@ def main(args):
     class_names = full_dataset.classes
 
     if 'vit' in args.models:
-        if args.dataset == 'sound':
-            # sound
-            print("Start sound vit")
+        if args.dataset == 'audio':
+            # audio
+            print("Start audio vit")
             net = VitClassification(
                 dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes,
                 class_names=class_names,
-                experiment_name='sound_texture_classification_vit',
+                experiment_name='audio_texture_classification_vit',
                 num_epochs=50,
                 learning_rate=0.0001
             )
@@ -192,13 +192,13 @@ def main(args):
                 learning_rate=0.0001
             )
         else:
-            # sound+accel
-            print("Start sound+accel vit")
-            net = SoundAccelMultiClassification(
+            # audio+accel
+            print("Start audio+accel vit")
+            net = AudioAccelMultiClassification(
                 dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes,
                 class_names=class_names,
-                experiment_name='sound_accel_texture_classification_vit',
+                experiment_name='audio_accel_texture_classification_vit',
                 num_epochs=50,
                 learning_rate=0.0001,
                 model="vit"
@@ -211,14 +211,14 @@ def main(args):
         net.close_writer()
 
     if 'resnet' in args.models:
-        if args.dataset == 'sound':
-            # sound
-            print("Start sound resnet")
+        if args.dataset == 'audio':
+            # audio
+            print("Start audio resnet")
             net = ResnetClassification(
                 dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes,
                 class_names=class_names,
-                experiment_name='sound_texture_classification_resnet',
+                experiment_name='audio_texture_classification_resnet',
                 num_epochs=50,
                 learning_rate=0.0001
             )
@@ -244,14 +244,14 @@ def main(args):
                 num_epochs=50,
                 learning_rate=0.0001
             )
-        elif args.dataset == 'sound_accel':
-            # sound+accel
-            print("Start sound+accel resnet")
-            net = SoundAccelMultiClassification(
+        elif args.dataset == 'audio_accel':
+            # audio+accel
+            print("Start audio+accel resnet")
+            net = AudioAccelMultiClassification(
                 dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes,
                 class_names=class_names,
-                experiment_name='sound_accel_texture_classification_resnet',
+                experiment_name='audio_accel_texture_classification_resnet',
                 num_epochs=50,
                 learning_rate=0.0001,
                 model="resnet",
@@ -296,8 +296,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Haptics Texture Classification')
-    parser.add_argument('--dataset', type=str, choices=['sound', 'accel', 'sound_accel', 'force'], required=True,
-                        help='Dataset to use for classification (sound, accel, sound_accel, force)')
+    parser.add_argument('--dataset', type=str, choices=['audio', 'accel', 'audio_accel', 'force'], required=True,
+                        help='Dataset to use for classification (audio, accel, audio_accel, force)')
     parser.add_argument('--models', nargs='+', choices=['vit', 'resnet', 'regnet', 'svc', 'decision_tree', 'random_forest'], required=True,
                         help='Models to use for classification (resnet, svc, decision_tree, random_forest)')
     parser.add_argument('--scale', type=str, choices=['full', 'medium', 'lite'], default='full',

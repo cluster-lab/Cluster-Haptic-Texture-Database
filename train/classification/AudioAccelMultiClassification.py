@@ -1,7 +1,7 @@
 
 """
-This module implements a multi-modal classification system that combines sound and accelerometer data.
-It uses a dual-stream architecture where each modality (sound and accelerometer data) is processed
+This module implements a multi-modal classification system that combines audio and accelerometer data.
+It uses a dual-stream architecture where each modality (audio and accelerometer data) is processed
 by a separate feature extractor, and then the features are fused for final classification.
 
 The architecture supports different backbone models (ResNet, ViT, RegNet) for feature extraction
@@ -9,7 +9,7 @@ from each modality, and provides flexibility in how the features are combined.
 
 Key components:
 - FeatureExtractor: A wrapper for various backbone models to extract features
-- SoundAccelMultiClassification: The main class that handles the dual-stream architecture,
+- AudioAccelMultiClassification: The main class that handles the dual-stream architecture,
   training, evaluation, and visualization of results
 
 This approach allows for effective texture classification by leveraging complementary information
@@ -98,9 +98,9 @@ class TransformerBlock(nn.Module):
         # Return to original shape
         return x.transpose(0, 1)
 
-class SoundAccelModel(nn.Module):
+class AudioAccelModel(nn.Module):
     def __init__(self, audio_model, accel_model, feature_size, num_classes, num_transformer_layers=1, model_type='resnet'):
-        super(SoundAccelModel, self).__init__()
+        super(AudioAccelModel, self).__init__()
         # 入力チャンネル数を指定して特徴抽出器を初期化
         self.audio_encoder = FeatureExtractor(audio_model, feature_size, in_channels=1, model_type=model_type)
         self.accel_encoder = FeatureExtractor(accel_model, feature_size, in_channels=3, model_type=model_type)
@@ -145,8 +145,8 @@ class SoundAccelModel(nn.Module):
         
         return output
 
-class SoundAccelMultiClassification:
-    def __init__(self, dataloaders, dataset_sizes, class_names, feature_size=256, experiment_name='sound_accel_texture_classification', num_epochs=25, learning_rate=0.00005, model="resnet"):
+class AudioAccelMultiClassification:
+    def __init__(self, dataloaders, dataset_sizes, class_names, feature_size=256, experiment_name='audio_accel_texture_classification', num_epochs=25, learning_rate=0.00005, model="resnet"):
         self.dataloaders = dataloaders
         self.dataset_sizes = dataset_sizes
         self.class_names = class_names
@@ -163,23 +163,23 @@ class SoundAccelMultiClassification:
 
         # Load pre-trained models
         if model == "resnet":
-            model_sound = models.resnet34(weights=ResNet34_Weights.DEFAULT)
+            model_audio = models.resnet34(weights=ResNet34_Weights.DEFAULT)
             model_accel = models.resnet34(weights=ResNet34_Weights.DEFAULT)
             model_type = 'resnet'
         elif model == "regnet":
-            model_sound = models.regnet_y_16gf(weights=models.RegNet_Y_16GF_Weights.IMAGENET1K_V1)
+            model_audio = models.regnet_y_16gf(weights=models.RegNet_Y_16GF_Weights.IMAGENET1K_V1)
             model_accel = models.regnet_y_16gf(weights=models.RegNet_Y_16GF_Weights.IMAGENET1K_V1)
             model_type = 'regnet'
         elif model == "vit":
-            model_sound = timm.create_model('vit_small_patch32_224', pretrained=True, in_chans=1)
+            model_audio = timm.create_model('vit_small_patch32_224', pretrained=True, in_chans=1)
             model_accel = timm.create_model('vit_small_patch32_224', pretrained=True, in_chans=3)
             model_type = 'vit'
         else:
             raise ValueError("Invalid model name. Choose from: 'resnet', 'regnet', 'vit'")
 
         # Create the multimodal classifier model
-        self.model = SoundAccelModel(
-            audio_model=model_sound,
+        self.model = AudioAccelModel(
+            audio_model=model_audio,
             accel_model=model_accel,
             feature_size=feature_size,
             num_classes=len(class_names),
@@ -218,8 +218,8 @@ class SoundAccelMultiClassification:
                 running_corrects = 0
 
                 # Iterate over data.
-                for sound_data, accel_data, labels in self.dataloaders[phase]:
-                    sound_data = sound_data.to(self.device)
+                for audio_data, accel_data, labels in self.dataloaders[phase]:
+                    audio_data = audio_data.to(self.device)
                     accel_data = accel_data.to(self.device)
                     labels = labels.to(self.device)
 
@@ -229,7 +229,7 @@ class SoundAccelMultiClassification:
                     # Forward
                     # Track history if only in train
                     with torch.set_grad_enabled(phase == 'train'):
-                        outputs = self.model(sound_data, accel_data)
+                        outputs = self.model(audio_data, accel_data)
                         _, preds = torch.max(outputs, 1)
                         loss = self.criterion(outputs, labels)
 
@@ -239,7 +239,7 @@ class SoundAccelMultiClassification:
                             self.optimizer.step()
 
                     # Statistics
-                    running_loss += loss.item() * sound_data.size(0)
+                    running_loss += loss.item() * audio_data.size(0)
                     running_corrects += torch.sum(preds == labels.data)
 
                 epoch_loss = running_loss / self.dataset_sizes[phase]
@@ -294,12 +294,12 @@ class SoundAccelMultiClassification:
         all_labels = []
 
         with torch.no_grad():
-            for sound_data, accel_data, labels in self.dataloaders['test']:
-                sound_data = sound_data.to(self.device)
+            for audio_data, accel_data, labels in self.dataloaders['test']:
+                audio_data = audio_data.to(self.device)
                 accel_data = accel_data.to(self.device)
                 labels = labels.to(self.device)
 
-                outputs = self.model(sound_data, accel_data)
+                outputs = self.model(audio_data, accel_data)
                 _, preds = torch.max(outputs, 1)
 
                 all_preds.append(preds)

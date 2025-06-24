@@ -14,7 +14,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, confusion_m
 
 
 class ResnetClassification:
-    def __init__(self, dataloaders, dataset_sizes, class_names, experiment_name='sound_texture_classification', num_epochs=25, learning_rate=0.002):
+    def __init__(self, dataloaders, dataset_sizes, class_names, experiment_name='audio_texture_classification', num_epochs=25, learning_rate=0.002):
         self.dataloaders = dataloaders
         self.dataset_sizes = dataset_sizes
         self.class_names = class_names

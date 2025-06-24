@@ -5,8 +5,8 @@ from tqdm import tqdm
 from active_filter.LMSnoise_cancel import LMSNoiseCanceller
 import re
 
-def read_wav_files_from_folder(sound_dir, scale=None):
-    folder_list = [os.path.join(sound_dir, f) for f in os.listdir(sound_dir) if os.path.isdir(os.path.join(sound_dir, f))]
+def read_wav_files_from_folder(audio_dir, scale=None):
+    folder_list = [os.path.join(audio_dir, f) for f in os.listdir(audio_dir) if os.path.isdir(os.path.join(audio_dir, f))]
     folder_list = sorted(folder_list, key=lambda x: int(re.search(r'\d+', os.path.basename(x)).group()))  # sort by texture id
 
     # scale
@@ -49,8 +49,8 @@ def process_wav_files(input_dir, output_dir, filter_class, scale=None):
 
 # example
 if __name__ == '__main__':
-    input_directory = '/workspace/texture_dataset/sensor_data/raw_sound'
-    output_directory = '/workspace/texture_dataset/sensor_data/sound'
+    input_directory = '/workspace/texture_dataset/sensor_data/raw_audio'
+    output_directory = '/workspace/texture_dataset/sensor_data/audio'
 
     # if not exists, create
     if not os.path.exists(output_directory):

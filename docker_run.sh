@@ -6,4 +6,4 @@ docker run -it \
            --gpus all \
            --shm-size=8g \
            -v $(pwd):/workspace \
-            hapticdataset_eval
+            cluster_haptic_texture_database

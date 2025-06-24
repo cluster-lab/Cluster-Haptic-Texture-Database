@@ -12,12 +12,12 @@ import seaborn as sns
 from tensorboardX import SummaryWriter
 import numpy as np
 from torchmetrics.classification import MulticlassConfusionMatrix
-from datasets.sound_vel_dir_dataset import SoundVelDirDataset
+from datasets.audio_vel_dir_dataset import AudioVelDirDataset
 from datasets.accel_vel_dir_dataset import AccelVelDirDataset
-from datasets.sound_accel_vel_dir_dataset import SoundAccelVelDirDataset
+from datasets.audio_accel_vel_dir_dataset import AudioAccelVelDirDataset
 from classification.ResnetClassification import ResnetClassification
 from classification.VitClassification import VitClassification
-from classification.SoundAccelMultiClassification import SoundAccelMultiClassification
+from classification.AudioAccelMultiClassification import AudioAccelMultiClassification
 
 
 
@@ -107,12 +107,12 @@ def get_data_transforms(dataset_type, model_type):
     return transforms.Compose(transforms_list)
     
 def load_dataset(dataset_type, texture_id, data_dir, label, transform):
-    if dataset_type == 'sound':
-        return SoundVelDirDataset(texture_id, data_dir, label=label, transform=transform, duration=1, sr=22050)
+    if dataset_type == 'audio':
+        return AudioVelDirDataset(texture_id, data_dir, label=label, transform=transform, duration=1, sr=22050)
     elif dataset_type == 'accel':
         return AccelVelDirDataset(texture_id, data_dir, label=label, transform=transform, sampling_interval=0.0002, duration=1)
-    elif dataset_type == 'sound_accel':
-        return SoundAccelVelDirDataset(texture_id, data_dir, label=label, transform=transform, duration=1, sr=22050, sampling_interval=0.0002)
+    elif dataset_type == 'audio_accel':
+        return AudioAccelVelDirDataset(texture_id, data_dir, label=label, transform=transform, duration=1, sr=22050, sampling_interval=0.0002)
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
 
@@ -155,7 +155,7 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = False
 
 def get_model(args, dataloaders, dataset_sizes, class_names, experiment_name):
-    if args.dataset == 'sound' or args.dataset == 'accel':
+    if args.dataset == 'audio' or args.dataset == 'accel':
         if args.model == 'resnet':
             return ResnetClassification(
                 dataloaders=dataloaders,
@@ -175,9 +175,9 @@ def get_model(args, dataloaders, dataset_sizes, class_names, experiment_name):
                 learning_rate=0.0001
             )
         
-    elif args.dataset == 'sound_accel':
+    elif args.dataset == 'audio_accel':
         if args.model == 'resnet':
-            return SoundAccelMultiClassification(
+            return AudioAccelMultiClassification(
                 dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes,
                 class_names=class_names,
@@ -188,7 +188,7 @@ def get_model(args, dataloaders, dataset_sizes, class_names, experiment_name):
                 feature_size=128
             )
         elif args.model == 'vit':
-            return SoundAccelMultiClassification(
+            return AudioAccelMultiClassification(
                 dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes,
                 class_names=class_names,
@@ -252,8 +252,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Haptics Texture Classification')
-    parser.add_argument('--dataset', type=str, choices=['sound', 'accel', 'sound_accel'], required=True,
-                        help='Dataset to use for classification (sound, accel, sound_accel)')
+    parser.add_argument('--dataset', type=str, choices=['audio', 'accel', 'audio_accel'], required=True,
+                        help='Dataset to use for classification (audio, accel, audio_accel)')
     parser.add_argument('--labels', nargs='+', choices=['velocity', 'direction'], required=True,
                         help='Labels to classify (velocity, direction)')
     parser.add_argument('--model', type=str, choices=['resnet', 'vit'], required=True,

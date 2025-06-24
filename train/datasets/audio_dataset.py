@@ -10,9 +10,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from datasets.dataset_scale import DatasetScale
 
 
-class SoundDataset(Dataset):
+class AudioDataset(Dataset):
     def __init__(self, root_dir, transform=None, duration=4, sr=22050, scale=DatasetScale.FULL, output_direction=False, output_velocity=False): 
-        self.sound_dir = os.path.join(root_dir, "sensor_data/sound")
+        self.audio_dir = os.path.join(root_dir, "sensor_data/audio")
         self.output_direction = output_direction
         self.output_velocity = output_velocity
 
@@ -22,7 +22,7 @@ class SoundDataset(Dataset):
         self.sr = sr
         self.total_samples = sr * duration
 
-        folder_list = [os.path.join(self.sound_dir, f) for f in os.listdir(self.sound_dir) if os.path.isdir(os.path.join(self.sound_dir, f))]
+        folder_list = [os.path.join(self.audio_dir, f) for f in os.listdir(self.audio_dir) if os.path.isdir(os.path.join(self.audio_dir, f))]
         folder_list = sorted(folder_list, key=lambda x: int(os.path.basename(x)))  # sort by texture id
 
         # scale
@@ -47,7 +47,7 @@ class SoundDataset(Dataset):
         self.data_list = []
         self.labels_list = []
         
-        print("Loading SoundDataset...")
+        print("Loading AudioDataset...")
         total_files = len(file_list)
 
         # initialize min and max values
@@ -74,10 +74,10 @@ class SoundDataset(Dataset):
         for idx, file_name in enumerate(file_list):
             texture_id, _, _, _, _ = self.parse_filename(file_name)
 
-            sound_path = os.path.join(self.sound_dir, texture_id, file_name)
-            sound_data = self.load_wav(sound_path)
+            audio_path = os.path.join(self.audio_dir, texture_id, file_name)
+            audio_data = self.load_wav(audio_path)
             
-            self.data_list.append(sound_data)
+            self.data_list.append(audio_data)
             self.labels_list.append(self.label_to_int[texture_id])
 
             # print progress
@@ -161,7 +161,7 @@ if __name__ == "__main__":
         # transforms.Resize((224, 224))
     ])
 
-    dataset = SoundDataset("/workspace/texture_dataset", transform=transform, duration=1, scale=DatasetScale.LITE, output_direction=True, output_velocity=True)
+    dataset = AudioDataset("/workspace/texture_dataset", transform=transform, duration=1, scale=DatasetScale.LITE, output_direction=True, output_velocity=True)
 
     num_samples = len(dataset)
     print("Number of samples in dataset:", num_samples)

@@ -8,18 +8,18 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from datasets.sound_dataset import SoundDataset
+from datasets.audio_dataset import AudioDataset
 from datasets.accel_dataset_mel import AccelDatasetMel
 from datasets.dataset_scale import DatasetScale
 
-class SoundAccelDataset(Dataset):
+class AudioAccelDataset(Dataset):
     def __init__(self, root_dir, transform=None, duration=4, sr=22050, sampling_interval=0.001, 
                  scale=DatasetScale.FULL, output_direction=False, output_velocity=False):  # 出力フラグを追加
         
         self.output_direction = output_direction
         self.output_velocity = output_velocity
         
-        self.sound_dataset = SoundDataset(
+        self.audio_dataset = AudioDataset(
             root_dir, 
             transform=None, 
             duration=duration, 
@@ -38,42 +38,42 @@ class SoundAccelDataset(Dataset):
         )
 
         # Ensure both datasets are of same length and have matching labels
-        assert len(self.sound_dataset) == len(self.accel_dataset), "Sound and Accel datasets should be of the same size"
-        assert all(a == b for a, b in zip(self.sound_dataset.labels_list, self.accel_dataset.labels_list)), "Mismatch in labels between Sound and Accel datasets"
+        assert len(self.audio_dataset) == len(self.accel_dataset), "Audio and Accel datasets should be of the same size"
+        assert all(a == b for a, b in zip(self.audio_dataset.labels_list, self.accel_dataset.labels_list)), "Mismatch in labels between Audio and Accel datasets"
 
         self.transform = transform
         
-        self.label_to_int = self.sound_dataset.label_to_int
-        self.classes = self.sound_dataset.classes
+        self.label_to_int = self.audio_dataset.label_to_int
+        self.classes = self.audio_dataset.classes
 
     def __len__(self):
-        return len(self.sound_dataset)
+        return len(self.audio_dataset)
     
     def __getitem__(self, idx):
         # get data from sound_dataset
-        sound_outputs = self.sound_dataset[idx]
+        audio_outputs = self.audio_dataset[idx]
         accel_data, accel_label = self.accel_dataset[idx]
         
         # unpack sound_outputs based on its length
-        if len(sound_outputs) == 4:  # (data, label, direction, velocity)
-            sound_data, sound_label, direction, velocity = sound_outputs
+        if len(audio_outputs) == 4:  # (data, label, direction, velocity)
+            audio_data, audio_label, direction, velocity = audio_outputs
         else:  # (data, label)
-            sound_data, sound_label = sound_outputs
+            audio_data, audio_label = audio_outputs
             direction = None
             velocity = None
         
         # Assert that labels from both datasets match for the given index
-        assert sound_label == accel_label, f"Labels mismatch at index {idx}"
+        assert audio_label == accel_label, f"Labels mismatch at index {idx}"
         
-        label = sound_label
+        label = audio_label
 
         # Apply transform
         if self.transform:
-            sound_data = self.transform(sound_data)
+            audio_data = self.transform(audio_data)
             accel_data = self.transform(accel_data)
 
         # build outputs based on flags
-        outputs = [sound_data, accel_data, label]
+        outputs = [audio_data, accel_data, label]
         if self.output_direction:
             outputs.append(direction)
         if self.output_velocity:
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         transforms.Resize((224, 224))
     ])
 
-    dataset = SoundAccelDataset(root_dir="/workspace/texture_dataset", transform=transform, duration=2, sr=22050, sampling_interval=0.001, scale=DatasetScale.LITE)
+    dataset = AudioAccelDataset(root_dir="/workspace/texture_dataset", transform=transform, duration=2, sr=22050, sampling_interval=0.001, scale=DatasetScale.LITE)
     
     num_samples = len(dataset)
     print("Number of samples in dataset:", num_samples)
@@ -115,8 +115,8 @@ if __name__ == "__main__":
     idx = random.randint(0, num_samples-1)
 
     # get random sample
-    sound_data, accel_data, label = dataset[idx]
-    print("Sound data shape:", sound_data.shape)
+    audio_data, accel_data, label = dataset[idx]
+    print("Audio data shape:", audio_data.shape)
     print("Accel data shape:", accel_data.shape)
     print("Label:", label)
 
@@ -125,8 +125,8 @@ if __name__ == "__main__":
     plt.figure(figsize=(15,5))
     plt.title("mel spectrogram")
     # squeeze
-    sound_data = sound_data.squeeze(0)
-    plt.imshow(sound_data, aspect='auto', origin='lower')
+    audio_data = audio_data.squeeze(0)
+    plt.imshow(audio_data, aspect='auto', origin='lower')
     plt.colorbar()
     plt.show()
 

@@ -7,7 +7,7 @@ import soundfile as sf
 class AudioAmplifier:
     def __init__(self, root):
         self.root = root
-        self.root.title("sound amplifier")
+        self.root.title("audio amplifier")
         
         # Create GUI elements
         self.select_button = tk.Button(root, text="select WAV file", command=self.select_file)

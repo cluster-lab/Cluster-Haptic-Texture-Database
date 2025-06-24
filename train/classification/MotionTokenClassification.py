@@ -79,9 +79,9 @@ class TransformerBlock(nn.Module):
         # Return to original shape
         return x.transpose(0, 1)
 
-class SoundAccelModel(nn.Module):
+class AudioAccelModel(nn.Module):
     def __init__(self, audio_model=None, accel_model=None, feature_size=256, num_classes=10, num_transformer_layers=1, model_type='resnet'):
-        super(SoundAccelModel, self).__init__()
+        super(AudioAccelModel, self).__init__()
         
         # 入力モダリティの設定
         self.use_audio = audio_model is not None
@@ -164,7 +164,7 @@ class SoundAccelModel(nn.Module):
 
 class MotionTokenClassification:
     def __init__(self, dataloaders, dataset_sizes, class_names, feature_size=256, 
-                 experiment_name='sound_accel_texture_classification_token', 
+                 experiment_name='audio_accel_texture_classification_token', 
                  num_epochs=25, learning_rate=0.00005, model="resnet",
                  use_audio=True, use_accel=True):
         self.dataloaders = dataloaders
@@ -184,18 +184,18 @@ class MotionTokenClassification:
         print(f"Device: {self.device}")
 
         # Load pre-trained models
-        model_sound = None
+        model_audio = None
         model_accel = None
         
         if model == "resnet":
             if use_audio:
-                model_sound = models.resnet34(weights=ResNet34_Weights.DEFAULT)
+                model_audio = models.resnet34(weights=ResNet34_Weights.DEFAULT)
             if use_accel:
                 model_accel = models.resnet34(weights=ResNet34_Weights.DEFAULT)
             model_type = 'resnet'
         elif model == "vit":
             if use_audio:
-                model_sound = timm.create_model('vit_small_patch32_224', pretrained=True, in_chans=1)
+                model_audio = timm.create_model('vit_small_patch32_224', pretrained=True, in_chans=1)
             if use_accel:
                 model_accel = timm.create_model('vit_small_patch32_224', pretrained=True, in_chans=3)
             model_type = 'vit'
@@ -203,8 +203,8 @@ class MotionTokenClassification:
             raise ValueError("Invalid model name. Choose from: 'resnet', 'vit'")
 
         # Create the multimodal classifier model
-        self.model = SoundAccelModel(
-            audio_model=model_sound if use_audio else None,
+        self.model = AudioAccelModel(
+            audio_model=model_audio if use_audio else None,
             accel_model=model_accel if use_accel else None,
             feature_size=feature_size,
             num_classes=len(class_names),
@@ -255,14 +255,14 @@ class MotionTokenClassification:
                         accel = data if self.use_accel else None
                         
                     elif len(batch) == 5:  # マルチモーダルの場合
-                        sound_data, accel_data, labels, direction, velocity = batch
-                        sound_data = sound_data.to(self.device) if self.use_audio else None
+                        audio_data, accel_data, labels, direction, velocity = batch
+                        audio_data = audio_data.to(self.device) if self.use_audio else None
                         accel_data = accel_data.to(self.device) if self.use_accel else None
                         labels = labels.to(self.device)
                         direction = direction.float().to(self.device)
                         velocity = velocity.float().to(self.device)
                         
-                        audio = sound_data
+                        audio = audio_data
                         accel = accel_data
                     else:
                         raise ValueError(f"Unexpected batch size: {len(batch)}")
@@ -351,14 +351,14 @@ class MotionTokenClassification:
                     accel = data if self.use_accel else None
                     
                 elif len(batch) == 5:
-                    sound_data, accel_data, labels, direction, velocity = batch
-                    sound_data = sound_data.to(self.device) if self.use_audio else None
+                    audio_data, accel_data, labels, direction, velocity = batch
+                    audio_data = audio_data.to(self.device) if self.use_audio else None
                     accel_data = accel_data.to(self.device) if self.use_accel else None
                     labels = labels.to(self.device)
                     direction = direction.float().to(self.device)
                     velocity = velocity.float().to(self.device)
                     
-                    audio = sound_data
+                    audio = audio_data
                     accel = accel_data
                 else:
                     raise ValueError(f"Unexpected batch size: {len(batch)}")

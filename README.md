@@ -59,7 +59,7 @@ python3 FFT_view.py
 ## Classification experiments
 **Options**
 - `--models`: Specify the models to use (resnet, vit, svc, decision_tree, random_forest)
-- `--dataset`: Specify the dataset type (sound, accel, sound_accel)
+- `--dataset`: Specify the dataset type (audio, accel, audio_accel)
 - `--scale`: Specify the dataset scale (lite, medium, full)
 - `--labels`: Specify the classification labels (velocity, direction)
 ### image texture classification
@@ -68,15 +68,15 @@ python3 train/image_classification.py --models resnet
 ```
 ### haptics texture classification
 ```
-python3 train/haptics_texture_classification.py --dataset sound --models resnet --scale full
+python3 train/haptics_texture_classification.py --dataset audio --models resnet --scale full
 ```
 ### haptics texture classification with motion label
 ```
-python3 train/haptics_texture_classification_motion.py --dataset sound --models resnet --scale full
+python3 train/haptics_texture_classification_motion.py --dataset audio --models resnet --scale full
 ```
 ### haptics velocity and direction classification
 ```
-python3 train/vel_dir_classification.py --dataset sound --labels velocity --model resnet
+python3 train/vel_dir_classification.py --dataset audio --labels velocity --model resnet
 ```
 
 ### log
