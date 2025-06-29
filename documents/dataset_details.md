@@ -20,14 +20,18 @@ texture_dataset/
     │
     ├── accel/
     │
-    └── force/
+    ├── force/
+    │
+    └── position/
 ```
 
 ## images_scan_area file naming rule
-(texture_id).jpg
+- img(texture_id).jpg
+- example: img0.jpg
+
 
 ## sensor_data file naming rule
-(texture_id)\_(direction)\_(velocity)\_(force)\_(repeat count).csv or .wav
+- (texture_id)\_(direction)\_(velocity)\_(force)\_(repeat count).csv or .wav
 
 ### texture_id
 [texture list](https://docs.google.com/spreadsheets/d/1ZQ6jQgE8iEozCCI4KmeYy866WPxxT0qG2Sy3mrofjE4/edit?usp=sharing)
@@ -93,5 +97,18 @@ time,force
 0.0009990528727670048,1.009
 0.0012090528727670066,1.009
 0.0013390528727670048,1.009
+```
+
+## position
+- file format : csv
+- time (s)
+- 2D position (mm)
+- sampling rate 100 Hz
+### csv format
+```
+time,X,Y
+0.000613,0.0,45.0
+0.010477,0.0,45.0
+0.01994,0.0,45.0
 ```
 
