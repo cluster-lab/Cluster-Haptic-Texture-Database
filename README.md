@@ -22,7 +22,7 @@ git clone git@github.com:cluster-lab/Cluster-Haptic-Texture-Database.git
 cd Cluster-Haptic-Texture-Database
 ./docker_build.sh
 ```
-### 3. unzip [dataset](https://drive.google.com/drive/folders/1mNrVh7y1hK1eHlkC_qke7acv578rkf6D) and place in this directory
+### 3. unzip [dataset](https://doi.org/10.6084/m9.figshare.29438288) and place in this directory
 directory structure
 ```
 Cluster-Haptic-Texture-Database

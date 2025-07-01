@@ -1,7 +1,7 @@
 # Dataset details
 
 ## Dataset URL
-https://drive.google.com/drive/folders/1mNrVh7y1hK1eHlkC_qke7acv578rkf6D
+https://doi.org/10.6084/m9.figshare.29438288
 
 ## Directory structure
 ```
@@ -34,7 +34,7 @@ texture_dataset/
 - (texture_id)\_(direction)\_(velocity)\_(force)\_(repeat count).csv or .wav
 
 ### texture_id
-[texture list](https://docs.google.com/spreadsheets/d/1ZQ6jQgE8iEozCCI4KmeYy866WPxxT0qG2Sy3mrofjE4/edit?usp=sharing)
+[texture list](texture_list.pdf)
 
 ### direction
 clockwise angle(degree)  
