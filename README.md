@@ -1,4 +1,4 @@
-# Cluster Haptic Texture Database: Haptic Texture Database with Variety in Velocity and Direction of Sliding Contacts
+# Cluster Haptic Texture Database: Haptic Texture Database with Varied Velocity–Direction Sliding Contacts
 
 The Cluster Haptic Texture Database is a comprehensive dataset for haptic texture research. This database provides haptic texture data with various sliding velocities and directions.
 This repository contains the dataset and experiment code.
